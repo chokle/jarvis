@@ -69,6 +69,38 @@ const BARE_NAME = new RegExp(`^(?:hey|hi|ok|okay|yo)?\\s*${NAME}[\\s,.!?]*$`, 'i
 /** A leading vocative on a real command: "Jarvis, what's the weather". */
 const LEADING_NAME = new RegExp(`^(?:hey|hi|ok|okay|yo)?\\s*${NAME}\\b[\\s,.:!?-]*`, 'i')
 
+/**
+ * Telling him to go away.
+ *
+ * "Jarvis, logout" drops him back to standby, where nothing but his name is
+ * acted on again. The name is optional — by the time you are dismissing him you
+ * are already talking to him — but the phrase has to be the whole utterance.
+ * That last part matters: "put the computer to sleep" and "log out of my
+ * account" are jobs for him, not instructions to stop listening, and an
+ * unanchored match would swallow both. Only a bare dismissal counts.
+ */
+const LOGOUT = new RegExp(
+  `^(?:hey|hi|ok|okay|yo)?\\s*(?:${NAME}[\\s,.:!?-]*)?` +
+    `(?:log ?out|log off|sign ?out|sign off|stand ?down|go to sleep|` +
+    `goodnight|good night|goodbye|good bye|bye|dismissed|` +
+    `that (?:will|'?ll) be all|that'?s all)` +
+    `(?:\\s+(?:please|now|sir|thanks|thank you|${NAME}))*[\\s,.!?]*$`,
+  'i',
+)
+
+/**
+ * Started by the launcher, into a window nobody can see.
+ *
+ * The ignition button assumes someone is looking at it, and the clap listener
+ * assumes someone is in the room with a screen. Run as a background assistant
+ * there is neither, so `?auto=1` powers him up on load instead. Chrome is
+ * started with its autoplay policy relaxed for exactly this case — without that
+ * the audio context comes up suspended and he boots deaf and mute.
+ */
+const AUTO =
+  typeof window !== 'undefined' &&
+  new URLSearchParams(window.location.search).has('auto')
+
 export default function App() {
   const store = useStore
   const phase = useStore((s) => s.phase)
@@ -109,6 +141,38 @@ export default function App() {
     music.duck(false)
     sfx.duck(false)
     s.setPhase('dormant')
+  }
+
+  /**
+   * Dismissed. Acknowledge, then go quiet.
+   *
+   * The acknowledgement is the point: silence in answer to "logout" is
+   * indistinguishable from not having heard it, and the next thing anyone does
+   * about that is say it again, louder. Standing down happens after the line
+   * finishes rather than before, because goDormant cancels whatever is
+   * speaking — including this. The timeout is the guard against a speech engine
+   * that never reports the end of a sentence; missing the acknowledgement is a
+   * blemish, staying awake after being told to go is the actual failure.
+   */
+  const standDown = () => {
+    clearIdle()
+    silence()
+    turn.current++
+    const s = store.getState()
+    s.setCaption('')
+    s.setPhase('speaking')
+
+    const bye = createSpeaker()
+    speaker.current = bye
+    bye.say('Standing by, sir.')
+    const done = () => {
+      if (speaker.current === bye) speaker.current = null
+      goDormant()
+    }
+    void Promise.race([
+      bye.end(),
+      new Promise((r) => setTimeout(r, 3000)),
+    ]).then(done, done)
   }
 
   /** Open the mic and wait. `window` is how long before he gives up. */
@@ -240,6 +304,14 @@ export default function App() {
     const phase = store.getState().phase
     if (phase === 'offline' || phase === 'boot') return
 
+    // "Jarvis, logout" said to someone who is already asleep. Stay asleep, and
+    // say nothing about it — waking up to announce that he is standing down is
+    // exactly the noise the command exists to avoid.
+    if (trailing && LOGOUT.test(trailing)) {
+      goDormant()
+      return
+    }
+
     store.getState().setError(null)
     sfx.play('wake')
 
@@ -292,6 +364,14 @@ export default function App() {
   const onUtterance = (text: string) => {
     const phase = store.getState().phase
     if (phase === 'offline' || phase === 'boot' || phase === 'dormant') return
+
+    // Dismissed mid-conversation. Checked before the vocative strip, so
+    // "Jarvis, logout" is read as an instruction to him rather than as a
+    // question about logging out of something.
+    if (LOGOUT.test(text)) {
+      standDown()
+      return
+    }
 
     // People keep using his name as a vocative once they're already talking to
     // him. Strip it rather than sending "jarvis" to the model as a question.
@@ -527,6 +607,15 @@ export default function App() {
     store.getState().setPhase('dormant')
   }
 
+  // -- unattended start -----------------------------------------------------
+
+  /** No button, no clap, no one watching: come up on our own. */
+  useEffect(() => {
+    if (!AUTO) return
+    void powerOn()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   // -- clap to start --------------------------------------------------------
 
   /**
@@ -542,7 +631,10 @@ export default function App() {
    * about a feature nobody asked for would be worse than quietly doing without.
    */
   useEffect(() => {
-    if (phase !== 'offline') return
+    // In unattended mode the microphone belongs to the voice loop from the
+    // first second; a clap detector fighting it for the stream is how you get
+    // an assistant that hears half of what you say.
+    if (AUTO || phase !== 'offline') return
     let live: { stop: () => void } | null = null
     let gone = false
     void listenForClap(() => {

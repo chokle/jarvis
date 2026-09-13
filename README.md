@@ -1,5 +1,11 @@
 # J.A.R.V.I.S.
 
+> **Built on [adewaskar/jarvis](https://github.com/adewaskar/jarvis)** by Aditya
+> Dewaskar (MIT). The original project — the interface, voice pipeline, bridge
+> and gesture control — is his work, and its commit history is preserved here.
+> This fork adds Windows support and security hardening; see
+> [What this fork adds](#what-this-fork-adds).
+
 A browser voice assistant with an Iron Man holographic interface. Say
 **"Hey Jarvis"**, he wakes, listens, and does real things through your tools —
 searches the web, generates images, drives your phone, reads your mail. The face
@@ -12,6 +18,28 @@ the heavy work (the model itself) runs on Anthropic's servers, so even a low-end
 laptop only has to draw the interface. **ElevenLabs is an optional add-on** that
 gives JARVIS a much better voice and sharper hearing; without it he speaks and
 listens through the browser's own speech, and everything still works.
+
+---
+
+## What this fork adds
+
+- **Bridge bound to loopback.** The bridge used to listen on every network
+  interface, and its `Origin` check is a browser convention, not authentication
+  — any client on the same network could set the header and drive an agent that
+  may have shell access. It now binds to `127.0.0.1` only (`bridge/server.mjs`).
+- **Windows support.** The `chrome_*` extension bridge does not run on Windows,
+  so on `win32` the system prompt points JARVIS at the Chrome DevTools MCP server
+  instead and teaches it the Git Bash quirks of Windows commands (`taskkill //IM`,
+  `winget`). macOS keeps the original behaviour. The prompt also requires a
+  spoken confirmation before shutdown, restart, sign-out or deleting files.
+- **"Jarvis, logout".** A voice dismissal that acknowledges and returns to
+  standby. The pattern must match the whole utterance, so *"log out of my
+  account"* is still treated as a task rather than a dismissal (`src/App.tsx`).
+- **Unattended mode.** `?auto=1` powers up on load, with no INITIALISE click or
+  clap, so JARVIS can run as a background assistant.
+- **Windows launchers.** Start JARVIS in a Chrome window parked off-screen (kept
+  un-throttled so the wake word still works), bring it back into view, and stop
+  exactly the processes it started. See [Running on Windows](#running-on-windows).
 
 ---
 
@@ -79,6 +107,37 @@ Click **INITIALISE**, allow the microphone when asked, and say **"Hey Jarvis"**.
 
 > It has to be a real browser window. Embedded preview panes block the
 > microphone, so JARVIS will look perfectly alive and simply never respond.
+
+---
+
+## Running on Windows
+
+Double-click launchers live in the repo root:
+
+| File | Does |
+|---|---|
+| `start-jarvis.cmd` | Visible mode: starts the bridge and the interface, then opens Chrome |
+| `start-jarvis.vbs` | Hidden mode: runs `jarvis.ps1`, which starts everything and parks the interface in a Chrome window off the edge of the desktop — you just talk |
+| `show-jarvis.vbs` | Brings the hidden window back on screen |
+| `stop-jarvis.vbs` | Stops only the processes JARVIS started |
+
+Both start modes run with **writes enabled** — read
+[Enabling actions](#enabling-actions) first.
+
+The hidden launcher uses a Chrome profile of its own (`%LOCALAPPDATA%\JarvisApp`)
+with the microphone pre-allowed for `localhost:5173` and the **camera denied**,
+because nobody can answer a permission prompt in a window they cannot see.
+
+For the ElevenLabs voice, copy `jarvis-secrets.example.cmd` to
+`jarvis-secrets.cmd` and paste your key in. That file is git-ignored.
+
+For browser control, add the
+[Chrome DevTools MCP server](https://github.com/ChromeDevTools/chrome-devtools-mcp)
+to your user-level Claude Code config, where the bridge looks for it:
+
+```bash
+claude mcp add --scope user chrome-devtools -- npx chrome-devtools-mcp@latest
+```
 
 ---
 
@@ -199,6 +258,7 @@ chose.
 | **Space** | Talk without the wake word |
 | Just speak | Interrupt him mid-sentence (barge-in) |
 | **V** | Cycle the browser voice |
+| **"Jarvis, logout"** | Acknowledge and stand down (also "stand down", "goodbye", "that'll be all") |
 | **Escape** | Stand down |
 | **D** | Live diagnostics panel |
 | **T** | One-line audio self-test |
@@ -297,6 +357,8 @@ terminal, and that nothing else is holding port `8787`.
 
 All of this lives in `bridge/server.mjs`:
 
+- The bridge listens on `127.0.0.1` only, so nothing else on the network can
+  reach it. The origin check below is a browser convention, not authentication.
 - The WebSocket accepts only local dev origins (add more with
   `JARVIS_ALLOWED_ORIGINS`).
 - `/file`, `/img` and `/media` validate the scheme, confine to allowed roots,
@@ -308,7 +370,13 @@ All of this lives in `bridge/server.mjs`:
 
 ## Credits & licence
 
-MIT.
+MIT. The original project is by
+[Aditya Dewaskar](https://github.com/adewaskar) —
+[adewaskar/jarvis](https://github.com/adewaskar/jarvis). The additions in this
+fork are released under the same licence.
+
+Music by Kevin MacLeod (incompetech.com), licensed under Creative Commons
+Attribution 4.0 — see [`public/audio/CREDITS.md`](public/audio/CREDITS.md).
 
 The boot sound and any tracks in `public/audio/` ship with the project for the
 demo. If you go on to monetise something built on this, clearing the rights to

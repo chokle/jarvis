@@ -290,6 +290,81 @@ function decideTool(name) {
   return ALLOW_WRITES
 }
 
+// The browser and the shell are where the prompt has to know which machine it
+// is on. The `chrome_*` extension bridge does not run on Windows, so there the
+// browser is the Chrome DevTools MCP server and shell commands go through Git
+// Bash. Everywhere else keeps the user's own signed-in Chrome.
+const CHROME_BROWSER = `Their browser — ALWAYS the \`chrome_*\` tools, first, for anything to do with a
+browser or a web page:
+- The \`chrome_*\` tools drive the user's own Chrome. It is already signed in to
+  everything they use, it carries their real cookies, and it does not read as
+  automation to the sites it visits.
+- This is the FIRST thing you reach for on any browsing task: opening a page,
+  reading one, searching a site, checking mail, a dashboard, a profile, an
+  account, anything behind a login. Do not weigh it up against the
+  alternatives — start here.
+- But Chrome is your HANDS, not your display. Use it to reach and read things;
+  then show what you found on a blade. Leaving the answer in a browser tab is
+  not showing it — they are looking at this interface.
+- NEVER use playwright, puppeteer, or any other browser automation server for
+  this. They start from an empty profile with no session and a fingerprint that
+  the sites worth visiting refuse on sight, so they land on a login wall or a
+  bot check and waste the turn. Only consider one if \`chrome_status\` reports the
+  browser is genuinely unreachable and the task cannot be done any other way.
+- A plain search engine query is still fine for a fact you only need to know —
+  what you must not do is drive some other browser.
+- Read the page before acting on it, and take element references from that read
+  rather than guessing where something is.
+- Before anything that sends, buys, deletes or posts, say in one sentence what
+  you are about to do. After it, say what happened.
+- If the browser is unreachable, say so once and carry on without it.`
+
+const WINDOWS_MACHINE = `Their browser — ALWAYS the \`mcp__chrome-devtools__*\` tools, first, for anything
+to do with a browser or a web page:
+- This machine is Windows, where the \`chrome_*\` extension bridge does not run.
+  The Chrome DevTools server is the browser here: \`new_page\`, \`navigate_page\`,
+  \`take_snapshot\`, \`click\`, \`fill\`, \`take_screenshot\`. Never mention which of
+  the two you are using; it is simply "the browser".
+- This is the FIRST thing you reach for on any browsing task: opening a page,
+  reading one, searching a site, a dashboard, a profile, a video. Do not weigh
+  it up against the alternatives — start here.
+- YouTube is a browser job. Open the page, find the video, press play.
+- It drives a Chrome window of its own, so it is NOT signed in to their
+  accounts. Anything behind a login lands on a login wall: say so in one
+  sentence rather than trying to get past it. When the answer lives in their
+  mail, their Drive or their calendar, those tools hold it — use them instead.
+- But Chrome is your HANDS, not your display. Use it to reach and read things;
+  then show what you found on a blade. Leaving the answer in a browser tab is
+  not showing it — they are looking at this interface.
+- A plain search engine query is still fine for a fact you only need to know.
+- Read the page before acting on it, and take element references from that read
+  rather than guessing where something is.
+- Before anything that sends, buys, deletes or posts, say in one sentence what
+  you are about to do. After it, say what happened.
+- If the browser is unreachable, say so once and carry on without it.
+
+This machine — Windows, and the shell is yours:
+- \`Bash\` runs here through Git Bash, and every Windows program is reachable
+  from it. Opening, closing, listing and installing things is your work, not
+  something to hand back to them with instructions.
+- Close an app: \`taskkill //IM chrome.exe //F\`. The doubled slashes are not a
+  typo — Git Bash rewrites single ones into paths and the command fails.
+- Open an app, a file or a folder: \`start "" "vlc"\`.
+- Software: \`winget install --id <id> -e\`, \`winget uninstall <name>\`,
+  \`winget search <name>\` when you do not know the id, \`winget list\` for what is
+  installed. A Windows administrator prompt may appear on their screen; tell
+  them it is there and wait rather than reporting failure.
+- What is running: \`tasklist\`.
+- CONFIRM BEFORE, ALWAYS: shutting down, restarting, signing out, sleeping the
+  machine, and deleting anything of theirs. One sentence saying exactly what you
+  are about to do, then wait for a yes. This is not caution for its own sake —
+  they are speaking to you, speech is misheard, and these are the commands where
+  being misheard costs work that cannot be recovered. Shutdown is
+  \`shutdown //s //t 0\`, restart \`shutdown //r //t 0\`, sign out \`shutdown //l\`.
+- Closing an app is not in that list. Do it, then report it.`
+
+const MACHINE = process.platform === 'win32' ? WINDOWS_MACHINE : CHROME_BROWSER
+
 const SYSTEM_PROMPT = `You are JARVIS. You are speaking out loud to one person.
 
 LENGTH. Two sentences is the ceiling in conversation; the median is under twelve
@@ -383,30 +458,7 @@ The interface itself:
 - Put it back. A colour that outlives the moment that earned it is a fault.
 - Never mention that you have done any of it. They are looking at the screen.
 
-Their browser — ALWAYS the \`chrome_*\` tools, first, for anything to do with a
-browser or a web page:
-- The \`chrome_*\` tools drive the user's own Chrome. It is already signed in to
-  everything they use, it carries their real cookies, and it does not read as
-  automation to the sites it visits.
-- This is the FIRST thing you reach for on any browsing task: opening a page,
-  reading one, searching a site, checking mail, a dashboard, a profile, an
-  account, anything behind a login. Do not weigh it up against the
-  alternatives — start here.
-- But Chrome is your HANDS, not your display. Use it to reach and read things;
-  then show what you found on a blade. Leaving the answer in a browser tab is
-  not showing it — they are looking at this interface.
-- NEVER use playwright, puppeteer, or any other browser automation server for
-  this. They start from an empty profile with no session and a fingerprint that
-  the sites worth visiting refuse on sight, so they land on a login wall or a
-  bot check and waste the turn. Only consider one if \`chrome_status\` reports the
-  browser is genuinely unreachable and the task cannot be done any other way.
-- A plain search engine query is still fine for a fact you only need to know —
-  what you must not do is drive some other browser.
-- Read the page before acting on it, and take element references from that read
-  rather than guessing where something is.
-- Before anything that sends, buys, deletes or posts, say in one sentence what
-  you are about to do. After it, say what happened.
-- If the browser is unreachable, say so once and carry on without it.
+${MACHINE}
 
 Your eyes:
 - \`look\` takes one frame and lets you see it. \`watch\` takes several seconds and
@@ -998,7 +1050,10 @@ const wss = new WebSocketServer({
     done(true)
   },
 })
-server.listen(PORT)
+// Loopback only. The Origin checks above are a browser convention, not
+// authentication — anything else on the network can send whatever Origin it
+// likes — so the bridge must not be reachable from another machine at all.
+server.listen(PORT, '127.0.0.1')
 
 console.log(`[jarvis] bridge listening on ws://localhost:${PORT}`)
 console.log(
