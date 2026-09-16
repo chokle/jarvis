@@ -121,7 +121,7 @@ Frontend settings go in `.env.local` (copy from `.env.example`). Bridge settings
 | `VITE_BRIDGE_URL` | Bridge WebSocket URL |
 | `VITE_TTS_ENGINE` | `system` or `kokoro` |
 | `VITE_KOKORO_VOICE` | Kokoro voice id |
-| `VITE_USE_ELEVENLABS` | Prefer ElevenLabs when available |
+| `VITE_USE_ELEVENLABS` | Force ElevenLabs TTS on |
 | `VITE_PICOVOICE_ACCESS_KEY` | Enables Porcupine wake-word mode |
 | `VITE_ANTHROPIC_API_KEY` | Required only for direct mode |
 
