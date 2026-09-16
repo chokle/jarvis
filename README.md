@@ -128,7 +128,7 @@ Frontend settings go in `.env.local` (copy from `.env.example`). Bridge settings
 | `JARVIS_ALLOWED_ORIGINS` | localhost dev ports | Extra allowed browser origins |
 | `JARVIS_ALLOW_NO_ORIGIN` | off | Allows non-browser clients when `1` |
 | `JARVIS_FILE_ROOTS` | unset | Extra file roots for the bridge |
-| `JARVIS_VOICE_ID` | `JBFqnCBsd6RMkjVDRZzb` | Bridge fallback voice; set this to override it |
+| `JARVIS_VOICE_ID` | `JBFqnCBsd6RMkjVDRZzb` when ElevenLabs is enabled | Optional voice override |
 | `ELEVENLABS_API_KEY` | unset | Enables ElevenLabs voice + Scribe |
 
 ### Frontend variables
