@@ -131,12 +131,11 @@ Frontend settings go in `.env.local` (copy from `.env.example`). Bridge settings
 
 | Variable | Purpose |
 | --- | --- |
-| `VITE_BACKEND` | `bridge` or `direct` |
+| `VITE_BACKEND` | Frontend backend selection |
 | `VITE_BRIDGE_URL` | Bridge WebSocket URL |
 | `VITE_TTS_ENGINE` | Frontend TTS engine selection |
 | `VITE_USE_ELEVENLABS` | Force ElevenLabs TTS on |
 | `VITE_PICOVOICE_ACCESS_KEY` | Enables Porcupine wake-word mode |
-| `VITE_ANTHROPIC_API_KEY` | Required only for direct mode |
 
 `VITE_PICOVOICE_ACCESS_KEY` is optional. If you want Porcupine wake-word detection, get a free AccessKey from [console.picovoice.ai](https://console.picovoice.ai) and place it in `.env.local`.
 
