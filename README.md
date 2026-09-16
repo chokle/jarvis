@@ -145,6 +145,8 @@ Frontend settings go in `.env.local` (copy from `.env.example`). Bridge settings
 
 `VITE_PICOVOICE_ACCESS_KEY` is optional. If you want Porcupine wake-word detection, get a free AccessKey from [console.picovoice.ai](https://console.picovoice.ai) and place it in `.env.local`.
 
+`VITE_TTS_ENGINE=kokoro` is also optional. It uses the bundled Kokoro ONNX voice in the browser, so it needs a browser with WebGPU support and is slower than the default system voice, but it does not require a separate account or API key.
+
 ## Safety model
 
 The project is intentionally conservative by default:
