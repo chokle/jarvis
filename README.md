@@ -125,16 +125,6 @@ Frontend settings go in `.env.local` (copy from `.env.example`). Bridge settings
 | `VITE_PICOVOICE_ACCESS_KEY` | Enables Porcupine wake-word mode |
 | `VITE_ANTHROPIC_API_KEY` | Required only for direct mode |
 
-### Optional direct mode
-
-Direct mode is still supported, but it is a separate setup path from the local bridge flow above.
-
-- Set `VITE_BACKEND=direct` in `.env.local`
-- Set `VITE_ANTHROPIC_API_KEY` in `.env.local`
-- Run `npm run dev`
-
-Direct mode skips the local bridge, exposes the Anthropic key to the frontend bundle, and does not provide the same local MCP access as bridge mode.
-
 ## Safety model
 
 The project is intentionally conservative by default:
