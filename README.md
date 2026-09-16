@@ -60,11 +60,6 @@ npm run dev
 Effectful tools are disabled by default. To allow actions such as browser control or other write-capable tools:
 
 - **Split mode:** run `npm run bridge:writes` instead of `npm run bridge`, and keep `npm run dev` in the second terminal
-- **One-command mode:** start everything with:
-
-```bash
-npm start -- --writes
-```
 
 ## Windows launchers
 
