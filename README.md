@@ -100,7 +100,7 @@ The bridge:
 - listens on `127.0.0.1`
 - exposes a local WebSocket/HTTP interface on port `8787` by default
 - uses `@anthropic-ai/claude-agent-sdk`
-- reads MCP servers from the Claude Code config in your home directory (typically `~/.claude.json`)
+- reads MCP servers from the Claude Code config in your home directory
 - gates write-capable tools behind `JARVIS_ALLOW_WRITES=1`
 
 Only MCP servers configured in that home-directory Claude Code config are visible to the bridge. Account-level connectors added through `claude.ai` are not surfaced here.
