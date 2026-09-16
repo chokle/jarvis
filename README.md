@@ -52,11 +52,8 @@ npm run dev
 
 Effectful tools are disabled by default. To allow actions such as browser control or other write-capable tools:
 
-```bash
-npm run bridge:writes
-```
-
-Or:
+- **Split mode:** run `npm run bridge:writes` instead of `npm run bridge`, and keep `npm run dev` in the second terminal
+- **One-command mode:** start everything with:
 
 ```bash
 npm start -- --writes
@@ -88,10 +85,7 @@ The bridge:
 - exposes a local WebSocket/HTTP interface on port `8787` by default
 - uses `@anthropic-ai/claude-agent-sdk`
 - reads MCP servers from `~/.claude.json`
-- defaults to `claude-opus-5` at `high` effort
 - gates write-capable tools behind `JARVIS_ALLOW_WRITES=1`
-
-> Note: older project notes may mention `medium` effort, but the current runtime default in `bridge/server.mjs` is `high`.
 
 ## Voice and speech
 
@@ -110,13 +104,13 @@ Frontend settings go in `.env.local` (copy from `.env.example`). Bridge settings
 | Variable | Default |
 | --- | --- |
 | `JARVIS_BRIDGE_PORT` | `8787` |
-| `JARVIS_MODEL` | `claude-opus-5` |
-| `JARVIS_EFFORT` | `high` |
+| `JARVIS_MODEL` | Optional model override |
+| `JARVIS_EFFORT` | Optional effort override |
 | `JARVIS_ALLOW_WRITES` | off |
 | `JARVIS_ALLOWED_ORIGINS` | local dev origins |
 | `JARVIS_ALLOW_NO_ORIGIN` | off |
 | `JARVIS_FILE_ROOTS` | unset |
-| `JARVIS_VOICE_ID` | `JBFqnCBsd6RMkjVDRZzb` (George) |
+| `JARVIS_VOICE_ID` | Optional ElevenLabs voice override |
 | `ELEVENLABS_API_KEY` | unset |
 
 ### Frontend variables
