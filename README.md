@@ -125,8 +125,8 @@ Frontend settings go in `.env.local` (copy from `.env.example`). Bridge settings
 | `JARVIS_MODEL` | `claude-opus-5` | Override the bridge model |
 | `JARVIS_EFFORT` | `medium` | Override reasoning effort |
 | `JARVIS_ALLOW_WRITES` | off | Set to `1` to allow effectful tools |
-| `JARVIS_ALLOWED_ORIGINS` | unset | Adds accepted `Origin` header values beyond the built-in localhost dev ports |
-| `JARVIS_ALLOW_NO_ORIGIN` | `0` | Requests without an `Origin` header are rejected unless this is set to `1` |
+| `JARVIS_ALLOWED_ORIGINS` | unset | Adds accepted WebSocket `Origin` values beyond the built-in localhost dev ports |
+| `JARVIS_ALLOW_NO_ORIGIN` | `0` | WebSocket connections without an `Origin` header are rejected unless this is set to `1` |
 | `JARVIS_FILE_ROOTS` | unset | Extra file roots for the bridge |
 | `JARVIS_VOICE_ID` | `JBFqnCBsd6RMkjVDRZzb` when ElevenLabs is enabled | Optional voice override |
 | `ELEVENLABS_API_KEY` | unset | Enables ElevenLabs voice + Scribe |
