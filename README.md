@@ -79,6 +79,15 @@ Files in the repository root:
 
 For hidden Windows mode, the project uses a dedicated Chrome profile with microphone access pre-approved for localhost.
 
+Optional Windows extras:
+
+- For ElevenLabs voice, copy `jarvis-secrets.example.cmd` to `jarvis-secrets.cmd` and add your key there
+- For browser-control support, add the Chrome DevTools MCP server to your Claude Code user config:
+
+```bash
+claude mcp add --scope user chrome-devtools -- npx chrome-devtools-mcp@latest
+```
+
 ## How it works
 
 JARVIS has two parts:
@@ -94,6 +103,8 @@ The bridge:
 - reads MCP servers from `~/.claude.json`
 - gates write-capable tools behind `JARVIS_ALLOW_WRITES=1`
 
+Only MCP servers configured in `~/.claude.json` are visible to the bridge. Account-level connectors added through `claude.ai` are not surfaced here.
+
 ## Voice and speech
 
 - **Default**: browser speech recognition + browser speech synthesis
@@ -108,17 +119,17 @@ Frontend settings go in `.env.local` (copy from `.env.example`). Bridge settings
 
 ### Bridge variables
 
-| Variable | Default |
-| --- | --- |
-| `JARVIS_BRIDGE_PORT` | `8787` |
-| `JARVIS_MODEL` | Optional model override |
-| `JARVIS_EFFORT` | Optional effort override |
-| `JARVIS_ALLOW_WRITES` | off |
-| `JARVIS_ALLOWED_ORIGINS` | local dev origins |
-| `JARVIS_ALLOW_NO_ORIGIN` | off |
-| `JARVIS_FILE_ROOTS` | unset |
-| `JARVIS_VOICE_ID` | Optional ElevenLabs voice override |
-| `ELEVENLABS_API_KEY` | unset |
+| Variable | Default | Notes |
+| --- | --- | --- |
+| `JARVIS_BRIDGE_PORT` | `8787` | Bridge WebSocket + HTTP port |
+| `JARVIS_MODEL` | `claude-opus-5` | Override the bridge model |
+| `JARVIS_EFFORT` | `high` | Override reasoning effort |
+| `JARVIS_ALLOW_WRITES` | off | Set to `1` to allow effectful tools |
+| `JARVIS_ALLOWED_ORIGINS` | localhost dev ports | Extra allowed browser origins |
+| `JARVIS_ALLOW_NO_ORIGIN` | off | Allows non-browser clients when `1` |
+| `JARVIS_FILE_ROOTS` | unset | Extra file roots for the bridge |
+| `JARVIS_VOICE_ID` | `JBFqnCBsd6RMkjVDRZzb` | ElevenLabs fallback voice id |
+| `ELEVENLABS_API_KEY` | unset | Enables ElevenLabs voice + Scribe |
 
 ### Frontend variables
 
