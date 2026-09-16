@@ -125,6 +125,8 @@ Frontend settings go in `.env.local` (copy from `.env.example`). Bridge settings
 | `VITE_PICOVOICE_ACCESS_KEY` | Enables Porcupine wake-word mode |
 | `VITE_ANTHROPIC_API_KEY` | Required only for direct mode |
 
+`VITE_PICOVOICE_ACCESS_KEY` is optional. If you want Porcupine wake-word detection, get a free AccessKey from `console.picovoice.ai` and place it in `.env.local`.
+
 ## Safety model
 
 The project is intentionally conservative by default:
@@ -171,3 +173,5 @@ MIT.
 Original project: [adewaskar/jarvis](https://github.com/adewaskar/jarvis) by [Aditya Dewaskar](https://github.com/adewaskar).
 
 Music credits remain in [`public/audio/CREDITS.md`](public/audio/CREDITS.md).
+
+Bundled audio is included for the demo. If you reuse the project commercially, you are responsible for clearing the rights for any audio assets you keep.
