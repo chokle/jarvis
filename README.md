@@ -100,10 +100,10 @@ The bridge:
 - listens on `127.0.0.1`
 - exposes a local WebSocket/HTTP interface on port `8787` by default
 - uses `@anthropic-ai/claude-agent-sdk`
-- reads MCP servers from `~/.claude.json`
+- reads MCP servers from the Claude Code config in your home directory (typically `~/.claude.json`)
 - gates write-capable tools behind `JARVIS_ALLOW_WRITES=1`
 
-Only MCP servers configured in `~/.claude.json` are visible to the bridge. Account-level connectors added through `claude.ai` are not surfaced here.
+Only MCP servers configured in that home-directory Claude Code config are visible to the bridge. Account-level connectors added through `claude.ai` are not surfaced here.
 
 ## Voice and speech
 
@@ -123,7 +123,7 @@ Frontend settings go in `.env.local` (copy from `.env.example`). Bridge settings
 | --- | --- | --- |
 | `JARVIS_BRIDGE_PORT` | `8787` | Bridge WebSocket + HTTP port |
 | `JARVIS_MODEL` | `claude-opus-5` | Override the bridge model |
-| `JARVIS_EFFORT` | `high` | Current bridge runtime fallback; older docs may mention `medium` |
+| `JARVIS_EFFORT` | runtime fallback | Controlled by `bridge/server.mjs`; override with this variable |
 | `JARVIS_ALLOW_WRITES` | off | Set to `1` to allow effectful tools |
 | `JARVIS_ALLOWED_ORIGINS` | localhost dev ports | Extra allowed browser origins |
 | `JARVIS_ALLOW_NO_ORIGIN` | off | Allows non-browser clients when `1` |
