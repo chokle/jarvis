@@ -123,12 +123,12 @@ Frontend settings go in `.env.local` (copy from `.env.example`). Bridge settings
 | --- | --- | --- |
 | `JARVIS_BRIDGE_PORT` | `8787` | Bridge WebSocket + HTTP port |
 | `JARVIS_MODEL` | `claude-opus-5` | Override the bridge model |
-| `JARVIS_EFFORT` | runtime fallback | Controlled by `bridge/server.mjs`; override with this variable |
+| `JARVIS_EFFORT` | `high` | Override reasoning effort |
 | `JARVIS_ALLOW_WRITES` | off | Set to `1` to allow effectful tools |
 | `JARVIS_ALLOWED_ORIGINS` | localhost dev ports | Extra allowed browser origins |
 | `JARVIS_ALLOW_NO_ORIGIN` | off | Allows non-browser clients when `1` |
 | `JARVIS_FILE_ROOTS` | unset | Extra file roots for the bridge |
-| `JARVIS_VOICE_ID` | unset | Optional override; when omitted the bridge falls back to `JBFqnCBsd6RMkjVDRZzb` |
+| `JARVIS_VOICE_ID` | env unset / runtime `JBFqnCBsd6RMkjVDRZzb` | Optional ElevenLabs voice override |
 | `ELEVENLABS_API_KEY` | unset | Enables ElevenLabs voice + Scribe |
 
 ### Frontend variables
@@ -165,7 +165,7 @@ The project is intentionally conservative by default:
 
 **Bridge unreachable**
 
-- Make sure `npm run bridge` or `npm start` is still running
+- Make sure `npm run bridge`, `npm run bridge:writes`, or `npm start` is still running
 - Check whether port `8787` is already in use
 
 **Need environment help**
