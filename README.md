@@ -43,8 +43,15 @@ Then open the printed URL in **Chrome or Edge**, click **INITIALISE**, allow mic
 
 Run the two sides separately if you prefer:
 
+Terminal 1:
+
 ```bash
 npm run bridge
+```
+
+Terminal 2:
+
+```bash
 npm run dev
 ```
 
@@ -125,7 +132,7 @@ Frontend settings go in `.env.local` (copy from `.env.example`). Bridge settings
 | `VITE_PICOVOICE_ACCESS_KEY` | Enables Porcupine wake-word mode |
 | `VITE_ANTHROPIC_API_KEY` | Required only for direct mode |
 
-`VITE_PICOVOICE_ACCESS_KEY` is optional. If you want Porcupine wake-word detection, get a free AccessKey from `console.picovoice.ai` and place it in `.env.local`.
+`VITE_PICOVOICE_ACCESS_KEY` is optional. If you want Porcupine wake-word detection, get a free AccessKey from [console.picovoice.ai](https://console.picovoice.ai) and place it in `.env.local`.
 
 ## Safety model
 
