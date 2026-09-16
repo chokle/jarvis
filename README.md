@@ -133,15 +133,12 @@ Frontend settings go in `.env.local` (copy from `.env.example`). Bridge settings
 | --- | --- |
 | `VITE_BACKEND` | `bridge` or `direct` |
 | `VITE_BRIDGE_URL` | Bridge WebSocket URL |
-| `VITE_TTS_ENGINE` | `system` or `kokoro` (`kokoro` needs WebGPU and is slower) |
-| `VITE_KOKORO_VOICE` | Kokoro voice id |
+| `VITE_TTS_ENGINE` | Frontend TTS engine selection |
 | `VITE_USE_ELEVENLABS` | Force ElevenLabs TTS on |
 | `VITE_PICOVOICE_ACCESS_KEY` | Enables Porcupine wake-word mode |
 | `VITE_ANTHROPIC_API_KEY` | Required only for direct mode |
 
 `VITE_PICOVOICE_ACCESS_KEY` is optional. If you want Porcupine wake-word detection, get a free AccessKey from [console.picovoice.ai](https://console.picovoice.ai) and place it in `.env.local`.
-
-`VITE_TTS_ENGINE=kokoro` is also optional. It uses the bundled Kokoro ONNX voice in the browser, so it needs a browser with WebGPU support and is slower than the default system voice, but it does not require a separate account or API key.
 
 ## Safety model
 
