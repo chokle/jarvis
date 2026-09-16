@@ -82,7 +82,7 @@ For hidden Windows mode, the project uses a dedicated Chrome profile with microp
 Optional Windows extras:
 
 - For ElevenLabs voice, copy `jarvis-secrets.example.cmd` to `jarvis-secrets.cmd` and set `ELEVENLABS_API_KEY` there for the Windows launchers
-- For browser-control support, add the Chrome DevTools MCP server to your Claude Code user config:
+- Browser-control features on Windows require the Chrome DevTools MCP server in your Claude Code user config:
 
 ```bash
 claude mcp add --scope user chrome-devtools -- npx chrome-devtools-mcp@latest
