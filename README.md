@@ -88,6 +88,7 @@ The bridge:
 - exposes a local WebSocket/HTTP interface on port `8787` by default
 - uses `@anthropic-ai/claude-agent-sdk`
 - reads MCP servers from `~/.claude.json`
+- defaults to `claude-opus-5` at `high` effort
 - gates write-capable tools behind `JARVIS_ALLOW_WRITES=1`
 
 ## Voice and speech
@@ -113,7 +114,7 @@ Frontend settings go in `.env.local` (copy from `.env.example`). Bridge settings
 | `JARVIS_ALLOWED_ORIGINS` | local dev origins |
 | `JARVIS_ALLOW_NO_ORIGIN` | off |
 | `JARVIS_FILE_ROOTS` | unset |
-| `JARVIS_VOICE_ID` | ElevenLabs George |
+| `JARVIS_VOICE_ID` | `JBFqnCBsd6RMkjVDRZzb` (George) |
 | `ELEVENLABS_API_KEY` | unset |
 
 ### Frontend variables
