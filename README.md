@@ -91,11 +91,13 @@ The bridge:
 - defaults to `claude-opus-5` at `high` effort
 - gates write-capable tools behind `JARVIS_ALLOW_WRITES=1`
 
+> Note: older project notes may mention `medium` effort, but the current runtime default in `bridge/server.mjs` is `high`.
+
 ## Voice and speech
 
 - **Default**: browser speech recognition + browser speech synthesis
 - **With ElevenLabs key**: ElevenLabs voice + Scribe transcription
-- **Wake word**: browser speech by default, or Porcupine when configured
+- **Wake word**: browser speech by default, or Porcupine when `VITE_PICOVOICE_ACCESS_KEY` is set in `.env.local`
 
 The app detects available capabilities automatically at startup.
 
@@ -126,7 +128,18 @@ Frontend settings go in `.env.local` (copy from `.env.example`). Bridge settings
 | `VITE_TTS_ENGINE` | `system` or `kokoro` |
 | `VITE_KOKORO_VOICE` | Kokoro voice id |
 | `VITE_USE_ELEVENLABS` | Prefer ElevenLabs when available |
+| `VITE_PICOVOICE_ACCESS_KEY` | Enables Porcupine wake-word mode |
 | `VITE_ANTHROPIC_API_KEY` | Required only for direct mode |
+
+### Optional direct mode
+
+Direct mode is still supported, but it is a separate setup path from the local bridge flow above.
+
+- Set `VITE_BACKEND=direct` in `.env.local`
+- Set `VITE_ANTHROPIC_API_KEY` in `.env.local`
+- Run `npm run dev`
+
+Direct mode skips the local bridge, exposes the Anthropic key to the frontend bundle, and does not provide the same local MCP access as bridge mode.
 
 ## Safety model
 
